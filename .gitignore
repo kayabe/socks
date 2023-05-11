@@ -2,4 +2,4 @@
 doc
 cmd
 .vscode
-*_test.go
+client_test.go
