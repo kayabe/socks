@@ -112,6 +112,7 @@ func (c *Client) HandshakeV5(conn net.Conn) (err error) {
 	}
 
 	switch reply.Method {
+	case s5.MethodAuthNone: // ignore
 	case s5.MethodAuthNoneAcceptable:
 		return s5.ErrAuthNoneAcceptable
 	case s5.MethodAuthUserPW:
@@ -124,6 +125,8 @@ func (c *Client) HandshakeV5(conn net.Conn) (err error) {
 				return
 			}
 		}
+	default:
+		return s5.ErrAuthUnknown
 	}
 
 	return nil

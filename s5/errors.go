@@ -29,4 +29,7 @@ var (
 )
 
 // Auth UserPW
-var ErrAuthVersion = errors.New("invalid version")
+var (
+	ErrAuthVersion = errors.New("invalid version")
+	ErrAuthUnknown = errors.New("unknown authentication method")
+)
