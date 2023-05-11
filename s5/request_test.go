@@ -89,12 +89,12 @@ func TestRequestV5Unpack(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, req1, Request{
+	assert.Equal(t, Request{
 		Version:     VERSION,
 		Command:     CommandConnect,
 		AddressType: AddressTypeDomainName,
 		Destination: &RequestV5DestDomainName{Address: []byte("google.com"), Port: 80},
-	}, "the request should be equal")
+	}, req1, "the request should be equal")
 
 	//
 
@@ -103,12 +103,12 @@ func TestRequestV5Unpack(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, req2, Request{
+	assert.Equal(t, Request{
 		Version:     VERSION,
 		Command:     CommandConnect,
 		AddressType: AddressTypeIPv4,
 		Destination: &RequestV5DestIPv4{Address: [4]byte{}, Port: 80},
-	}, "the request should be equal")
+	}, req2, "the request should be equal")
 
 	//
 
@@ -117,12 +117,12 @@ func TestRequestV5Unpack(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, req3, Request{
+	assert.Equal(t, Request{
 		Version:     VERSION,
 		Command:     CommandConnect,
 		AddressType: AddressTypeIPv6,
 		Destination: &RequestV5DestIPv6{Address: [16]byte{}, Port: 80},
-	}, "the request should be equal")
+	}, req3, "the request should be equal")
 }
 
 ///

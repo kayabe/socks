@@ -99,6 +99,8 @@ func (d *RequestV5DestIPv4) Put(buf []byte) error {
 
 func (d *RequestV5DestIPv4) Unpack(r io.Reader) (err error) {
 	_, err = io.ReadFull(r, (*[6]byte)(unsafe.Pointer(d))[:])
+	// reorder endianess into little-endian
+	d.Port = (d.Port>>8)&0xFF | (d.Port<<8)&0xFF00
 	return
 }
 
@@ -130,5 +132,7 @@ func (h *RequestV5DestIPv6) Put(buf []byte) error {
 
 func (h *RequestV5DestIPv6) Unpack(r io.Reader) (err error) {
 	_, err = io.ReadFull(r, (*[18]byte)(unsafe.Pointer(h))[:])
+	// reorder endianess into little-endian
+	h.Port = (h.Port>>8)&0xFF | (h.Port<<8)&0xFF00
 	return
 }

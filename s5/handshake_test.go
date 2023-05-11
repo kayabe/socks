@@ -69,7 +69,7 @@ func TestHandshakeReplyUnpack(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, r, HandshakeReply{Version: 0x05, Method: MethodAuthNone}, "the handshake reply should be equal")
+	assert.Equal(t, HandshakeReply{Version: 0x05, Method: MethodAuthNone}, r, "the handshake reply should be equal")
 }
 
 func TestHandshakeReplyPack(t *testing.T) {

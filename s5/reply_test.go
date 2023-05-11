@@ -13,7 +13,7 @@ var testReplyIPv4Buf = []byte{VERSION, byte(ReplySuccess), 0x00, AddressTypeIPv4
 
 func TestReplyV5Status(t *testing.T) {
 	var status = ReplySuccess
-	assert.Equal(t, status.String(), "succeeded", "the status should be equal")
+	assert.Equal(t, "succeeded", status.String(), "the status should be equal")
 }
 
 func TestReplyUnpack(t *testing.T) {
