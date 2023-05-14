@@ -25,10 +25,10 @@ type Client struct {
 	ProxyAddr       string
 }
 
-// NewClient creates a new SOCKS client.
-func NewClient(proxyAddr string, proxyVersion any, options ...func(*Client)) (client *Client, err error) {
+// NewClient creates a new SOCKS client, defaults to protocol version socks5
+func NewClient(proxyAddr string, options ...func(*Client)) (client *Client, err error) {
 	client = &Client{
-		ProtocolVersion: proxyVersion,
+		ProtocolVersion: V5,
 		ProxyAddr:       proxyAddr,
 	}
 	for _, o := range options {
