@@ -16,6 +16,7 @@ type Authentication interface {
 
 	// Returns authentication method
 	Method() uint8
+	Ver() uint8
 }
 
 type Client struct {
@@ -120,8 +121,12 @@ func (c *Client) HandshakeV5(conn net.Conn) (err error) {
 			if err = c.Authentication.Pack(conn); err != nil {
 				return
 			}
-
-			if _, err = s5.AuthReplyFromConn(conn); err != nil {
+			if _, err = s5.AuthReplyFromConn(conn, func(Version uint8) error {
+				if Version != c.Authentication.Ver() {
+					return s5.ErrAuthVersion
+				}
+				return nil
+			}); err != nil {
 				return
 			}
 		}

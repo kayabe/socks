@@ -9,22 +9,27 @@ import (
 
 func TestAuthPack(t *testing.T) {
 	var buf = bytes.NewBuffer(nil)
-	_ = (&AuthReply{Status: ReplySuccess}).Pack(buf)
-
-	assert.Equal(t, []byte{VERSION, byte(ReplySuccess)}, buf.Bytes())
+	_ = (&AuthReply{Version: AuthUserPWVersion, Status: ReplyGeneralFailure}).Pack(buf)
+	assert.Equal(t, []byte{AuthUserPWVersion, byte(ReplyGeneralFailure)}, buf.Bytes())
 }
 
 func TestAuthUnpack(t *testing.T) {
-	var buf = bytes.NewBuffer([]byte{VERSION, byte(ReplySuccess)})
+	var buf = bytes.NewBuffer([]byte{AuthUserPWVersion, byte(ReplyGeneralFailure)})
 	var r AuthReply
+	r.Validate = func(Version uint8) error {
+		if Version != AuthUserPWVersion {
+			return ErrAuthVersion
+		}
+		return nil
+	}
 	_ = r.Unpack(buf)
-
-	assert.Equal(t, AuthReply{VERSION, ReplySuccess}, r)
+	r.Validate = nil
+	assert.Equal(t, AuthReply{Version: AuthUserPWVersion, Status: ReplyGeneralFailure}, r)
 }
 
 func BenchmarkAuthPack(b *testing.B) {
 	var buf = bytes.NewBuffer(nil)
-	var r = AuthReply{Status: ReplySuccess}
+	var r = AuthReply{Status: ReplyGeneralFailure}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		_ = r.Pack(buf)
@@ -33,7 +38,7 @@ func BenchmarkAuthPack(b *testing.B) {
 }
 
 func BenchmarkAuthUnpack(b *testing.B) {
-	var data = []byte{VERSION, byte(ReplySuccess)}
+	var data = []byte{AuthUserPWVersion, byte(ReplyGeneralFailure)}
 	var r AuthReply
 
 	b.ResetTimer()

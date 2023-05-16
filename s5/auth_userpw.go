@@ -59,3 +59,7 @@ func (auth *AuthUserPW) Unpack(r io.Reader) (err error) {
 func (AuthUserPW) Method() uint8 {
 	return uint8(MethodAuthUserPW)
 }
+
+func (AuthUserPW) Ver() uint8 {
+	return AuthUserPWVersion
+}

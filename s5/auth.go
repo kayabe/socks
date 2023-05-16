@@ -26,15 +26,16 @@ const (
 	MethodAuthNoneAcceptable AuthMethod = 0xFF // no acceptable methods
 )
 
-// AuthReply is the reply to a SOCKS5 authentication method.
+// AuthReply is the reply after SOCKS5 authentication method.
 type AuthReply struct {
-	Version uint8 // unrequired, only used by Unpack
-	Status  ReplyStatus
+	Version  uint8 // required, should be the version of the authentication method
+	Status   ReplyStatus
+	Validate func(uint8) error
 }
 
 // Pack for server-side
 func (t *AuthReply) Pack(w io.Writer) (err error) {
-	_, err = w.Write([]byte{VERSION, byte(t.Status)})
+	_, err = w.Write([]byte{t.Version, byte(t.Status)})
 	return
 }
 
@@ -44,18 +45,17 @@ func (t *AuthReply) Unpack(r io.Reader) (err error) {
 	if _, err = io.ReadFull(r, (*[2]byte)(unsafe.Pointer(t))[:]); err != nil {
 		return
 	}
-
-	// Check if the version matches
-	if t.Version != VERSION {
-		return ErrUnsupportedVersion
+	if t.Validate != nil {
+		err = t.Validate(t.Version)
 	}
-
 	return
 }
 
 // AuthReplyFromConn for client-side
-func AuthReplyFromConn(conn net.Conn) (_ *AuthReply, err error) {
-	var reply = new(AuthReply)
+func AuthReplyFromConn(conn net.Conn, validateCb func(authVersion uint8) error) (_ *AuthReply, err error) {
+	var reply = &AuthReply{
+		Validate: validateCb,
+	}
 	if err = reply.Unpack(conn); err != nil {
 		return nil, err
 	}
